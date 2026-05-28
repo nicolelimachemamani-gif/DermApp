@@ -190,7 +190,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.getElementById("auto-mlops-reason").innerText = data.auto_mlops_reason;
                     autoMlopsAlert.style.display = "flex";
                     logToTerminal(`[MLOPS ALERT] ¡Se detectó una muestra biológica con ${data.auto_mlops_reason}!`, "warning");
-                    logToTerminal(`[MLOPS AUTOMÁTICO] Iniciando reentrenamiento y verificación CI/CD en segundo plano...`, "info");
+                    logToTerminal(`[MLOPS AUTOMÁTICO] Iniciando reentrenamiento y verificación CI/CD de forma visible...`, "info");
+                    
+                    // Transición automática de pestaña tras 3.5 segundos para mostrar logs en vivo
+                    setTimeout(() => {
+                        // Cambiar la pestaña visualmente
+                        tabButtons.forEach(b => b.classList.remove("active"));
+                        tabContents.forEach(c => c.classList.remove("active"));
+                        
+                        const mlopsTabBtn = document.querySelector('[data-tab="mlops-tab"]');
+                        if (mlopsTabBtn) mlopsTabBtn.classList.add("active");
+                        
+                        const mlopsTabContent = document.getElementById("mlops-tab");
+                        if (mlopsTabContent) mlopsTabContent.classList.add("active");
+                        
+                        // Iniciar la secuencia de flujos con logs en tiempo real en la consola
+                        runRetrainPipeline(5, 0.0001, () => {
+                            // Al finalizar reentrenamiento, correr CI/CD de inmediato
+                            runCiCdPipeline(() => {
+                                // Al finalizar todo el flujo, esconder el banner en la otra pestaña y avisar
+                                if (autoMlopsAlert) autoMlopsAlert.style.display = "none";
+                                logToTerminal("[MLOPS AUTOMÁTICO] Ciclo de mantenimiento y aprendizaje continuo finalizado con éxito.", "success");
+                            });
+                        });
+                    }, 3500);
                 } else {
                     if (autoMlopsAlert) autoMlopsAlert.style.display = "none";
                 }
@@ -427,11 +450,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // REENTRENAMIENTO - EVENT STREAMING (SSE)
-    startRetrainBtn.addEventListener("click", () => {
-        const epochs = document.getElementById("retrain-epochs").value;
-        const lr = document.getElementById("retrain-lr").value;
-        
-        // Bloquear interfaz
+    // Función reutilizable para ejecutar el Pipeline de Reentrenamiento y mostrar sus logs en la terminal
+    function runRetrainPipeline(epochs, lr, onComplete) {
         startRetrainBtn.disabled = true;
         predictBtn.disabled = true;
         clearTerminal();
@@ -445,8 +465,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("lr", lr);
 
         // Hacemos el fetch que nos devolverá el stream de Server-Sent Events (SSE)
-        // SSE nativo usa EventSource pero EventSource no soporta POST de forma nativa.
-        // Hacemos POST a la ruta y leemos la respuesta como un stream directo!
         fetch("/api/retrain", {
             method: "POST",
             body: formData
@@ -457,23 +475,21 @@ document.addEventListener("DOMContentLoaded", () => {
             function readStream() {
                 reader.read().then(({ done, value }) => {
                     if (done) {
-                        logToTerminal("\n[FIN] Conexión cerrada. Pipeline de reentrenamiento finalizado.", "success");
+                        logToTerminal("\n[FIN] Conexión cerrada. Pipeline de reentrenamiento finalizado con éxito.", "success");
                         startRetrainBtn.disabled = false;
                         predictBtn.disabled = false;
                         loadModelsRegistry(); // Recargar modelos entrenados
+                        if (onComplete) onComplete();
                         return;
                     }
                     
                     const chunk = decoder.decode(value);
-                    // SSE envía datos formateados como 'data: text\n\n'
                     const lines = chunk.split("\n\n");
                     lines.forEach(line => {
                         if (line.startsWith("data: ")) {
                             const rawText = line.substring(6);
-                            // Limpiar retornos de carro simulados de progreso de TensorFlow
                             if (rawText.includes("\r")) {
                                 const sublines = rawText.split("\r");
-                                // Mostrar la última sublinea de progreso
                                 appendTerminalLine(sublines[sublines.length - 1], "terminal-line");
                             } else {
                                 appendTerminalLine(rawText, "terminal-line");
@@ -481,7 +497,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     });
                     
-                    readStream(); // Siguiente fragmento
+                    readStream();
                 });
             }
 
@@ -491,15 +507,11 @@ document.addEventListener("DOMContentLoaded", () => {
             startRetrainBtn.disabled = false;
             predictBtn.disabled = false;
         });
-    });
+    }
 
-    // -------------------------------------------------------------
-    // 5. PIPELINE CI/CD (SSE EVENT STREAMING)
-    // -------------------------------------------------------------
-    runCiBtn.addEventListener("click", () => {
+    // Función reutilizable para ejecutar el Pipeline de CI/CD y mostrar sus logs en la terminal
+    function runCiCdPipeline(onComplete) {
         runCiBtn.disabled = true;
-        clearTerminal();
-        
         logToTerminal("[CI/CD ENGINE] Inicializando pipeline automático de Integración Continua...", "info");
         
         fetch("/api/run-ci", {
@@ -514,6 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         logToTerminal("\n[FIN] Pipeline CI/CD completado.", "success");
                         runCiBtn.disabled = false;
                         loadModelsRegistry(); // Recargar modelos promovidos
+                        if (onComplete) onComplete();
                         return;
                     }
                     
@@ -544,6 +557,20 @@ document.addEventListener("DOMContentLoaded", () => {
             logToTerminal(`[ERROR CI/CD] Falló el streaming: ${err}`, "error");
             runCiBtn.disabled = false;
         });
+    }
+
+    startRetrainBtn.addEventListener("click", () => {
+        const epochs = document.getElementById("retrain-epochs").value;
+        const lr = document.getElementById("retrain-lr").value;
+        runRetrainPipeline(epochs, lr);
+    });
+
+    // -------------------------------------------------------------
+    // 5. PIPELINE CI/CD (SSE EVENT STREAMING)
+    // -------------------------------------------------------------
+    runCiBtn.addEventListener("click", () => {
+        clearTerminal();
+        runCiCdPipeline();
     });
 
     // -------------------------------------------------------------
