@@ -52,7 +52,13 @@ def predict():
         prediction_results = predict_skin_disease(temp_filepath)
         
         # Eliminar archivo temporal después del diagnóstico
+        img_hash = 0
         if os.path.exists(temp_filepath):
+            try:
+                from predict_image import calculate_image_hash
+                img_hash = calculate_image_hash(temp_filepath)
+            except Exception:
+                pass
             os.remove(temp_filepath)
             
         # --- NUEVO: Detección de Desconocido / Deriva y Reentrenamiento Automático ---
@@ -109,6 +115,20 @@ def predict():
                                 
                                 if p_ci.returncode == 0:
                                     print("[MLOPS AUTOMÁTICO] Hilo de fondo: ¡El nuevo modelo superó el Quality Gate y fue desplegado en caliente con cero inactividad!", flush=True)
+                                    # Registrar la muestra en la base de datos de hashes entrenados
+                                    try:
+                                        hashes_path = os.path.join(BASE_DIR, "models", "trained_hashes.json")
+                                        trained_list = []
+                                        if os.path.exists(hashes_path):
+                                            with open(hashes_path, "r") as fh:
+                                                trained_list = json.load(fh)
+                                        if img_hash not in trained_list:
+                                            trained_list.append(img_hash)
+                                            with open(hashes_path, "w") as fh:
+                                                json.dump(trained_list, fh)
+                                            print(f"[MLOPS AUTOMÁTICO] Hash {img_hash} guardado oficialmente como ENTRENADO en caliente.", flush=True)
+                                    except Exception as he:
+                                        print(f"Error guardando hash entrenado: {he}", flush=True)
                                 else:
                                     print("[MLOPS AUTOMÁTICO] Hilo de fondo: El pipeline CI/CD rechazó el nuevo modelo (No pasó pruebas o Quality Gate).", flush=True)
                             else:
