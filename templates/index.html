@@ -101,6 +101,15 @@
                         <div class="diagnostic-results" id="diagnostic-results" style="display: none;">
                             <hr class="divider">
                             
+                            <!-- Alerta de MLOps Automático si hay Deriva o Desconocido -->
+                            <div class="alert-box alert-warning" id="auto-mlops-alert" style="display: none; margin-bottom: 1.5rem; align-items: center; gap: 1rem; padding: 1rem 1.25rem;">
+                                <i class="fa-solid fa-robot alert-icon" style="font-size: 1.8rem; color: var(--warning-color); margin-top: 0;"></i>
+                                <div class="alert-content">
+                                    <h5 style="color: var(--warning-color); font-weight: 700; margin-bottom: 0.15rem; font-size: 0.9rem;">🔧 MLOps Auto-Mantenimiento Activado</h5>
+                                    <p style="font-size: 0.8rem; line-height: 1.45;">Se detectó un caso de <strong id="auto-mlops-reason">Desconocido</strong>. El sistema ha iniciado un proceso automático de <strong>reentrenamiento e integración continua (CI/CD)</strong> en segundo plano para ajustar el modelo en caliente (hot-swap) con cero tiempo de inactividad.</p>
+                                </div>
+                            </div>
+                            
                             <!-- Top Diagnóstico -->
                             <div class="top-result-card" id="top-result-card">
                                 <div class="result-header">

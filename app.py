@@ -55,6 +55,81 @@ def predict():
         if os.path.exists(temp_filepath):
             os.remove(temp_filepath)
             
+        # --- NUEVO: Detección de Desconocido / Deriva y Reentrenamiento Automático ---
+        if prediction_results.get("success", False) and "predictions" in prediction_results:
+            predictions = prediction_results["predictions"]
+            if predictions:
+                top_pred = predictions[0]
+                class_id = top_pred.get("class_id")
+                prob = top_pred.get("probability", 0.0)
+                
+                # Criterio para reentrenamiento automático:
+                # 1. Clase diagnosticada es "Unknown_Normal" (Desconocido/Normal)
+                # 2. O la probabilidad del diagnóstico principal es menor al 50% (Baja confianza / Patrón no reconocido)
+                is_unknown = (class_id == "Unknown_Normal")
+                is_low_confidence = (prob < 0.50)
+                
+                if is_unknown or is_low_confidence:
+                    print(f"\n[MLOPS AUTOMÁTICO] ¡Alerta de Deriva/Patrón Desconocido detectada!")
+                    print(f"  - Criterio: {'Clase Unknown_Normal' if is_unknown else 'Baja Confianza (' + f'{prob*100:.1f}%' + ')'}")
+                    print(f"  - Iniciando bucle de Autocorrección MLOps (Reentrenamiento + CI/CD en segundo plano)...")
+                    
+                    # Lanzar en un hilo de fondo para no bloquear la respuesta clínica al médico
+                    import threading
+                    def run_auto_mlops_loop():
+                        try:
+                            # 1. Ejecutar reentrenamiento automático
+                            print("[MLOPS AUTOMÁTICO] Hilo de fondo: Iniciando Reentrenamiento...", flush=True)
+                            retrain_cmd = [sys.executable, os.path.join(BASE_DIR, "retrain_pipeline.py")]
+                            
+                            p_retrain = subprocess.Popen(
+                                retrain_cmd,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                                text=True
+                            )
+                            # Leer logs para que se muestren en la consola del servidor (Render)
+                            for line in iter(p_retrain.stdout.readline, ''):
+                                print(f"[AUTO-RETRAIN LOG] {line.strip()}", flush=True)
+                            p_retrain.wait()
+                            
+                            if p_retrain.returncode == 0:
+                                print("[MLOPS AUTOMÁTICO] Hilo de fondo: Reentrenamiento completado con éxito. Iniciando CI/CD...", flush=True)
+                                # 2. Ejecutar CI/CD automático
+                                ci_cmd = [sys.executable, os.path.join(BASE_DIR, "run_ci.py")]
+                                p_ci = subprocess.Popen(
+                                    ci_cmd,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.STDOUT,
+                                    text=True
+                                )
+                                for line in iter(p_ci.stdout.readline, ''):
+                                    print(f"[AUTO-CI LOG] {line.strip()}", flush=True)
+                                p_ci.wait()
+                                
+                                if p_ci.returncode == 0:
+                                    print("[MLOPS AUTOMÁTICO] Hilo de fondo: ¡El nuevo modelo superó el Quality Gate y fue desplegado en caliente con cero inactividad!", flush=True)
+                                else:
+                                    print("[MLOPS AUTOMÁTICO] Hilo de fondo: El pipeline CI/CD rechazó el nuevo modelo (No pasó pruebas o Quality Gate).", flush=True)
+                            else:
+                                print("[MLOPS AUTOMÁTICO] Hilo de fondo: Error durante el reentrenamiento automático.", flush=True)
+                                
+                        except Exception as ex:
+                            print(f"[MLOPS AUTOMÁTICO] Error en el hilo de fondo: {ex}", flush=True)
+                            
+                    threading.Thread(target=run_auto_mlops_loop, daemon=True).start()
+                    
+                    # Añadir a la respuesta que se ha iniciado el mantenimiento automático
+                    prediction_results["auto_mlops_triggered"] = True
+                    prediction_results["auto_mlops_reason"] = "Clase Desconocida (Unknown_Normal)" if is_unknown else f"Baja Confianza ({prob*100:.1f}%)"
+                else:
+                    prediction_results["auto_mlops_triggered"] = False
+            else:
+                prediction_results["auto_mlops_triggered"] = False
+        else:
+            prediction_results["auto_mlops_triggered"] = False
+        # ----------------------------------------------------------------------------
+            
         return jsonify(prediction_results)
     except Exception as e:
         if os.path.exists(temp_filepath):

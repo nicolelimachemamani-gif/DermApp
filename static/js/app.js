@@ -183,6 +183,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (data.is_fallback) {
                     logToTerminal(`[FALLBACK ACTIVADO] Motivo: ${data.fallback_reason}`, "warning");
                 }
+                
+                // Mostrar alerta de MLOps automático si se disparó
+                const autoMlopsAlert = document.getElementById("auto-mlops-alert");
+                if (data.auto_mlops_triggered) {
+                    document.getElementById("auto-mlops-reason").innerText = data.auto_mlops_reason;
+                    autoMlopsAlert.style.display = "flex";
+                    logToTerminal(`[MLOPS ALERT] ¡Se detectó una muestra biológica con ${data.auto_mlops_reason}!`, "warning");
+                    logToTerminal(`[MLOPS AUTOMÁTICO] Iniciando reentrenamiento y verificación CI/CD en segundo plano...`, "info");
+                } else {
+                    if (autoMlopsAlert) autoMlopsAlert.style.display = "none";
+                }
+                
                 displayDiagnosticResults(data);
             } else {
                 logToTerminal(`[ERROR DE INFERENCIA] ${data.error}`, "error");
