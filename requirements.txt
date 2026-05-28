@@ -4,7 +4,7 @@ gunicorn==23.0.0
 
 # Inteligencia Artificial y Procesamiento de Datos
 tensorflow==2.17.0
-tensorflow-intel==2.17.0
+tensorflow-intel==2.17.0; sys_platform == 'win32'
 keras==3.12.2
 numpy==1.26.4
 protobuf==4.25.9
