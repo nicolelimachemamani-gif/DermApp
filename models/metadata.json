@@ -1,0 +1,14 @@
+[
+  {
+    "model_id": "densenet121_tflite_v1",
+    "version": "1.0.0",
+    "status": "active",
+    "accuracy": 0.7620,
+    "test_loss": 0.9764,
+    "epochs_trained": 17,
+    "created_at": "2026-05-26T17:43:00Z",
+    "framework": "TensorFlow Lite",
+    "file_path": "models/modelo_densenet.tflite",
+    "description": "Modelo inicial de producción entrenado en Google Colab con DenseNet121 y exportado a TFLite con optimizaciones de cuantización por defecto."
+  }
+]

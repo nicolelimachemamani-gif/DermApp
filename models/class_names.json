@@ -1,0 +1,266 @@
+{
+  "Acne": {
+    "name_es": "Acné",
+    "name_en": "Acne",
+    "description": "Una afección cutánea común caracterizada por la aparición de comedones (espinillas, puntos negros), pápulas, pústulas y a veces nódulos debido a la obstrucción de los folículos pilosos por grasa y células muertas.",
+    "severity": "Baja",
+    "recommendations": [
+      "Lavar la cara dos veces al día con un limpiador suave.",
+      "Evitar exprimir o tocar las lesiones para prevenir cicatrices e infecciones secundarias.",
+      "Utilizar productos no comedogénicos y libres de grasa.",
+      "Consultar a un dermatólogo para tratamientos tópicos como ácido salicílico o retinoides."
+    ]
+  },
+  "Actinic_Keratosis": {
+    "name_es": "Queratosis Actínica",
+    "name_en": "Actinic Keratosis",
+    "description": "Parches ásperos y escamosos en la piel causados por años de exposición solar. Se considera una lesión precancerosa que puede evolucionar a carcinoma de células escamosas.",
+    "severity": "Media-Alta",
+    "recommendations": [
+      "Evitar la exposición solar directa prolongada.",
+      "Usar protector solar de amplio espectro (FPS 50+) diariamente.",
+      "Realizar visitas periódicas al dermatólogo para seguimiento.",
+      "Tratamientos comunes incluyen crioterapia, cremas tópicas específicas o terapia fotodinámica."
+    ]
+  },
+  "Benign_tumors": {
+    "name_es": "Tumores Benignos (Quistes / Lipomas)",
+    "name_en": "Benign Tumors",
+    "description": "Crecimientos no cancerosos de la piel que incluyen quistes epidermoides, lipomas, dermatofibromas, entre otros. Generalmente son indoloros y móviles.",
+    "severity": "Baja",
+    "recommendations": [
+      "No intentar exprimir, drenar o extirpar en casa.",
+      "Monitorear si hay cambios repentinos de tamaño, color o dolor.",
+      "Consultar a un médico si causan molestias estéticas o físicas.",
+      "La extirpación quirúrgica menor en consultorio es simple y definitiva."
+    ]
+  },
+  "Bullous": {
+    "name_es": "Dermatosis Ampollosa (Penfigoide / Pénfigo)",
+    "name_en": "Bullous Disease",
+    "description": "Grupo de trastornos autoinmunes caracterizados por la aparición de ampollas grandes y llenas de líquido en la piel o membranas mucosas.",
+    "severity": "Alta",
+    "recommendations": [
+      "Requiere evaluación médica dermatológica urgente.",
+      "Evitar romper las ampollas para reducir el riesgo de infección grave.",
+      "Mantener las heridas limpias y cubiertas con vendajes estériles antiadherentes.",
+      "El tratamiento principal suele incluir corticosteroides sistémicos e inmunosupresores."
+    ]
+  },
+  "Candidiasis": {
+    "name_es": "Candidiasis Cutánea",
+    "name_en": "Candidiasis",
+    "description": "Infección por hongos del género Candida que afecta las capas superficiales de la piel, especialmente en zonas cálidas y húmedas (pliegues cutáneos, axilas, ingle).",
+    "severity": "Baja",
+    "recommendations": [
+      "Mantener la zona afectada limpia y completamente seca.",
+      "Usar ropa holgada de algodón para favorecer la ventilación.",
+      "Aplicar cremas antimicóticas tópicas (clotrimazol, miconazol) según prescripción.",
+      "Controlar factores subyacentes como la diabetes o el uso de antibióticos."
+    ]
+  },
+  "DrugEruption": {
+    "name_es": "Erupción por Medicamentos (Farmacodermia)",
+    "name_en": "Drug Eruption",
+    "description": "Una reacción adversa de la piel a un medicamento administrado de forma sistémica. Puede variar desde un sarpullido leve hasta reacciones severas con desprendimiento de piel.",
+    "severity": "Alta",
+    "recommendations": [
+      "Suspender inmediatamente el medicamento sospechoso bajo supervisión médica.",
+      "Buscar atención médica de inmediato para evaluar la gravedad.",
+      "Mantenerse hidratado y evitar la aplicación de productos irritantes.",
+      "Llevar un registro del medicamento causante para evitar futuras exposiciones."
+    ]
+  },
+  "Eczema": {
+    "name_es": "Eczema / Dermatitis Atópica",
+    "name_en": "Eczema",
+    "description": "Una afección inflamatoria crónica de la piel que causa sequedad intensa, enrojecimiento, descamación y picazón persistente. Es común en niños pero puede durar toda la vida.",
+    "severity": "Baja-Media",
+    "recommendations": [
+      "Aplicar cremas hidratantes espesas y sin perfume varias veces al día.",
+      "Tomar baños cortos con agua tibia (no caliente) y usar jabones syndet (sin detergente).",
+      "Evitar rascarse para prevenir infecciones secundarias (usar compresas frías si hay mucha picazón).",
+      "Usar corticosteroides tópicos recetados durante los brotes agudos."
+    ]
+  },
+  "Infestations_Bites": {
+    "name_es": "Infestaciones y Picaduras (Sarna / Insectos)",
+    "name_en": "Infestations & Bites",
+    "description": "Lesiones cutáneas causadas por picaduras de insectos o infestaciones parasitarias como la escabiosis (sarna). Provocan pápulas eritematosas y picazón severa, a menudo nocturna.",
+    "severity": "Baja-Media",
+    "recommendations": [
+      "Aplicar loción antiparasitaria (como permetrina) en todo el cuerpo según indicación médica.",
+      "Lavar toda la ropa de cama y vestir con agua caliente para eliminar ácaros.",
+      "Usar antihistamínicos orales o loción de calamina para aliviar la picazón.",
+      "Tratar simultáneamente a todos los contactos cercanos en casa."
+    ]
+  },
+  "Lichen": {
+    "name_es": "Liken Plano / Escleroso",
+    "name_en": "Lichen Planus",
+    "description": "Una enfermedad inflamatoria de la piel y mucosas que se caracteriza por pápulas brillantes, planas, violáceas y extremadamente pruriginosas.",
+    "severity": "Media",
+    "recommendations": [
+      "Consultar a un dermatólogo para confirmar el diagnóstico mediante biopsia si es necesario.",
+      "Evitar traumatismos en la piel (fenómeno de Koebner), ya que pueden aparecer nuevas lesiones.",
+      "Aplicar corticoides tópicos de alta potencia prescritos por el especialista.",
+      "Monitorear lesiones en la boca o genitales si se presentan."
+    ]
+  },
+  "Lupus": {
+    "name_es": "Lupus Cutáneo",
+    "name_en": "Cutaneous Lupus",
+    "description": "Manifestación cutánea del Lupus Eritematoso, que puede presentarse como eritema malar (en alas de mariposa) o placas discoides escamosas con tendencia a dejar cicatriz.",
+    "severity": "Alta",
+    "recommendations": [
+      "Fotoprotección estricta: uso de sombrero, ropa cubierta y protector solar FPS 50+ diario.",
+      "Evitar por completo la exposición solar y camas de bronceado.",
+      "Seguimiento conjunto con reumatología y dermatología.",
+      "Tratamiento con corticoides tópicos o inmunomoduladores y antipalúdicos orales (hidroxicloroquina)."
+    ]
+  },
+  "Moles": {
+    "name_es": "Nevus (Lunares)",
+    "name_en": "Moles",
+    "description": "Crecimientos pigmentados comunes en la piel causados por acumulaciones de melanocitos. La mayoría son completamente benignos, pero requieren vigilancia.",
+    "severity": "Baja",
+    "recommendations": [
+      "Aplicar la regla del ABCDE (Asimetría, Bordes irregulares, Color variado, Diámetro >6mm, Evolución).",
+      "Realizar un autoexamen de lunares una vez al mes.",
+      "Usar protector solar para evitar que se malignicen.",
+      "Consultar inmediatamente si un lunar sangra, pica, duele o cambia de aspecto rápido."
+    ]
+  },
+  "Psoriasis": {
+    "name_es": "Psoriasis",
+    "name_en": "Psoriasis",
+    "description": "Una enfermedad autoinmune crónica que acelera el ciclo de vida de las células cutáneas, provocando la acumulación de placas rojas y gruesas cubiertas de escamas plateadas.",
+    "severity": "Media-Alta",
+    "recommendations": [
+      "Mantener la piel bien lubricada con emolientes específicos.",
+      "Tomar baños de sol controlados y muy breves (según indicación médica).",
+      "Evitar el estrés, alcohol y tabaco, que son detonantes comunes de brotes.",
+      "Tratamientos varían desde cremas tópicas hasta fototerapia o medicamentos biológicos sistémicos."
+    ]
+  },
+  "Rosacea": {
+    "name_es": "Rosácea",
+    "name_en": "Rosacea",
+    "description": "Afección inflamatoria crónica que causa enrojecimiento facial (eritema), vasos sanguíneos visibles (telangiectasias) y a veces pápulas y pústulas similares al acné.",
+    "severity": "Baja-Media",
+    "recommendations": [
+      "Identificar y evitar factores desencadenantes (comidas picantes, bebidas calientes, alcohol, cambios extremos de temperatura).",
+      "Usar productos cosméticos extremadamente suaves y diseñados para piel sensible.",
+      "Protección solar física o mineral diaria.",
+      "Tratamiento médico con metronidazol tópico, ácido azelaico o ivermectina tópica."
+    ]
+  },
+  "Seborrh_Keratoses": {
+    "name_es": "Queratosis Seborreica",
+    "name_en": "Seborrheic Keratosis",
+    "description": "Crecimientos cutáneos benignos no cancerosos muy comunes en adultos mayores. Suelen ser de color marrón, negro o bronceado, con una apariencia cerosa o 'pegada'.",
+    "severity": "Baja",
+    "recommendations": [
+      "No requiere tratamiento médico obligatorio a menos que se irrite con el roce de la ropa.",
+      "No rascar ni intentar arrancar las lesiones.",
+      "Se pueden eliminar fácilmente mediante crioterapia o curetaje si causan molestias estéticas.",
+      "Confirmar siempre con el especialista que no se trate de otra lesión pigmentada."
+    ]
+  },
+  "SkinCancer": {
+    "name_es": "Sospecha de Cáncer de Piel (Carcinoma / Melanoma)",
+    "name_en": "Skin Cancer Suspicion",
+    "description": "Crecimiento anormal de células cutáneas. Puede presentarse como lesiones ulceradas que no sanan, nódulos perlados (basocelular) o lunares de forma y coloración atípica (melanoma).",
+    "severity": "Muy Alta",
+    "recommendations": [
+      "Agendar una cita prioritaria con un dermatólogo para dermatoscopia y biopsia.",
+      "Evitar manipular la lesión en absoluto.",
+      "Evitar la exposición solar y proteger rigurosamente el resto del cuerpo.",
+      "El diagnóstico temprano es clave y curativo en la gran mayoría de los casos mediante extirpación quirúrgica."
+    ]
+  },
+  "Sun_Sunlight_Damage": {
+    "name_es": "Daño Solar / Quemadura Solar",
+    "name_en": "Sunlight Damage",
+    "description": "Lesión aguda o crónica en la piel por radiación ultravioleta. Se presenta como enrojecimiento, dolor, descamación (quemadura aguda) o arrugas finas y manchas (fotoenvejecimiento).",
+    "severity": "Baja-Media",
+    "recommendations": [
+      "Aplicar compresas frías y geles de aloe vera para calmar la quemadura aguda.",
+      "Mantener una abundante hidratación oral.",
+      "Evitar exponer la piel dañada al sol hasta que se recupere completamente.",
+      "Incorporar antioxidantes (como Vitamina C) y protector solar diario para mitigar el daño crónico."
+    ]
+  },
+  "Tinea": {
+    "name_es": "Tiña (Infección por Dermatofitos / Hongos)",
+    "name_en": "Tinea (Fungal Infection)",
+    "description": "Infección fúngica superficial que afecta la piel (tiña corporal, del pie o atleta, de la cabeza). Se presenta como parches circulares con bordes rojos y escamosos.",
+    "severity": "Baja",
+    "recommendations": [
+      "Aplicar crema antimicótica (como terbinafina o ketoconazol) de forma constante según la indicación médica.",
+      "Mantener la zona limpia y seca (el exceso de humedad favorece el crecimiento del hongo).",
+      "No compartir toallas, calzado o prendas de vestir para evitar la propagación.",
+      "Completar el tratamiento completo incluso si las lesiones visuales ya desaparecieron."
+    ]
+  },
+  "Unknown_Normal": {
+    "name_es": "Piel Sana o Sin Patología Visible",
+    "name_en": "Healthy Skin / Normal",
+    "description": "La imagen cargada no muestra patrones claros de enfermedad cutánea patológica, o bien se identifica como piel sana estándar.",
+    "severity": "Ninguna",
+    "recommendations": [
+      "Mantener una rutina de cuidado básica: limpieza diaria, hidratación y protección solar.",
+      "Beber suficiente agua y mantener una dieta equilibrada para una piel saludable.",
+      "Continuar monitoreando tu piel periódicamente.",
+      "Consultar al especialista si notas algún cambio en el futuro."
+    ]
+  },
+  "Vascular_Tumors": {
+    "name_es": "Tumores Vasculares (Hemangiomas / Puntos Rubí)",
+    "name_en": "Vascular Tumors",
+    "description": "Crecimientos de vasos sanguíneos en la piel que aparecen como manchas o bultos rojos brillantes, comunes a partir de los 30 años. La mayoría son benignos.",
+    "severity": "Baja",
+    "recommendations": [
+      "No pinchar ni intentar drenar las lesiones, ya que pueden sangrar abundantemente.",
+      "Monitorear si crecen rápidamente o si sangran espontáneamente.",
+      "Se pueden eliminar fácilmente por razones estéticas con láser o electrocirugía.",
+      "Consultar a un dermatólogo si hay dudas diagnósticas."
+    ]
+  },
+  "Vasculitis": {
+    "name_es": "Vasculitis Cutánea",
+    "name_en": "Cutaneous Vasculitis",
+    "description": "Inflamación de los vasos sanguíneos de la piel, manifestada comúnmente como 'púrpura palpable' (manchas rojas o moradas que no desaparecen al presionarlas).",
+    "severity": "Alta",
+    "recommendations": [
+      "Requiere evaluación médica dermatológica e interna completa.",
+      "Reposo en cama y elevación de las extremidades inferiores si las lesiones están allí para reducir la inflamación.",
+      "Evitar el ejercicio extenuante y la exposición al frío extremo.",
+      "Investigar posibles causas sistémicas subyacentes con un especialista."
+    ]
+  },
+  "Vitiligo": {
+    "name_es": "Vitíligo",
+    "name_en": "Vitiligo",
+    "description": "Una afección crónica autoinmune en la cual los melanocitos (células productoras de pigmento) son destruidos, provocando parches de piel desprovistos de color (blancos).",
+    "severity": "Baja-Media",
+    "recommendations": [
+      "Aplicar protector solar estricto en los parches blancos, ya que no tienen protección natural de melanina y se queman con facilidad.",
+      "El apoyo psicológico puede ser muy beneficioso dado el impacto psicosocial de la afección.",
+      "Consultar tratamientos con dermatólogos: corticoides tópicos, inhibidores de la calcineurina o fototerapia.",
+      "Evitar quemaduras y roces mecánicos fuertes (fenómeno de Koebner)."
+    ]
+  },
+  "Warts": {
+    "name_es": "Verrugas Virales (VPH)",
+    "name_en": "Warts (HPV)",
+    "description": "Crecimientos benignos en la piel causados por la infección del Virus del Papiloma Humano (VPH). Son rugosas al tacto y sumamente contagiosas por contacto directo.",
+    "severity": "Baja",
+    "recommendations": [
+      "No rascar ni cortar la verruga, ya que esto propaga el virus a otras partes del cuerpo.",
+      "Lavar las manos minuciosamente después de tocar la lesión.",
+      "Usar tratamientos tópicos de venta libre (ácido salicílico) con precaución.",
+      "Procedimientos en consultorio como crioterapia (nitrógeno líquido) son altamente efectivos."
+    ]
+  }
+}

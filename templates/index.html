@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermalAI - MLOps Skin Diagnostic Dashboard</title>
+    
+    <!-- Google Fonts: Montserrat & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for beautiful charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Glassmorphism Styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-glows">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <!-- HEADER -->
+        <header class="main-header">
+            <div class="logo-container">
+                <i class="fa-solid fa-laptop-medical logo-icon"></i>
+                <div class="logo-text">
+                    <h1>DermalAI</h1>
+                    <span>SISTEMA INTELIGENTE DE DIAGNÓSTICO DERMATOLÓGICO Y PIPELINES MLOPS</span>
+                </div>
+            </div>
+            <div class="header-badges">
+                <div class="status-badge live-badge">
+                    <span class="pulse-dot"></span>
+                    <span>PRODUCCIÓN: ONLINE</span>
+                </div>
+                <div class="status-badge model-badge">
+                    <i class="fa-solid fa-microchip"></i>
+                    <span id="active-model-badge">Cargando...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- NAVEGACIÓN POR PESTAÑAS (TABS) -->
+        <nav class="dashboard-tabs">
+            <button class="tab-btn active" data-tab="clinic-tab">
+                <i class="fa-solid fa-stethoscope"></i> Módulo Clínico (Diagnóstico)
+            </button>
+            <button class="tab-btn" data-tab="mlops-tab">
+                <i class="fa-solid fa-gears"></i> Consola MLOps (Ingeniería de IA)
+            </button>
+        </nav>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="dashboard-main">
+            
+            <!-- PESTAÑA 1: MÓDULO CLÍNICO -->
+            <div class="tab-content active" id="clinic-tab">
+                <!-- PANEL 1: DIAGNÓSTICO INTERACTIVO -->
+                <section class="grid-card diagnostic-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-camera-retro"></i> Diagnóstico Médico en Tiempo Real</h2>
+                        <p>Sube una imagen de la afección dermatológica para que el modelo de Deep Learning (DenseNet121 TFLite) realice la clasificación.</p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Drop Zone -->
+                        <div class="upload-zone" id="upload-zone">
+                            <input type="file" id="image-input" accept="image/*" style="display: none;">
+                            <div class="upload-content" id="upload-content">
+                                <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                                <h3>Arrastra y suelta tu imagen aquí</h3>
+                                <p>o haz clic para explorar en tu PC</p>
+                                <span class="upload-formats">Formatos soportados: JPG, PNG, WEBP</span>
+                            </div>
+                            <div class="image-preview-container" id="preview-container" style="display: none;">
+                                <img id="image-preview" src="#" alt="Vista previa de la afección">
+                                <div class="preview-overlay">
+                                    <button class="btn btn-secondary btn-sm" id="change-image-btn">
+                                        <i class="fa-solid fa-rotate"></i> Cambiar Imagen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block btn-lg" id="predict-btn" disabled>
+                            <i class="fa-solid fa-stethoscope"></i> Analizar Muestra Cutánea
+                        </button>
+                        
+                        <!-- Loader -->
+                        <div class="diagnostic-loader" id="diagnostic-loader" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Ejecutando inferencia de 22 clases con DenseNet121 TFLite...</p>
+                        </div>
+                        
+                        <!-- Resultados -->
+                        <div class="diagnostic-results" id="diagnostic-results" style="display: none;">
+                            <hr class="divider">
+                            
+                            <!-- Top Diagnóstico -->
+                            <div class="top-result-card" id="top-result-card">
+                                <div class="result-header">
+                                    <div class="badge-severity" id="result-severity">BAJA</div>
+                                    <div class="confidence-circle">
+                                        <svg viewBox="0 0 36 36" class="circular-chart">
+                                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <path class="circle" id="result-confidence-circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            <text x="18" y="20.35" class="percentage" id="result-confidence-text">0%</text>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <h3 id="result-title">Acne</h3>
+                                <p class="clinical-desc" id="result-desc">Cargando descripción...</p>
+                                
+                                <div class="recommendations-box">
+                                    <h4><i class="fa-solid fa-circle-info"></i> Directrices de Cuidado Médico Recomendadas:</h4>
+                                    <ul id="result-recommendations">
+                                        <li>Cargando pautas...</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Gráfico de probabilidades -->
+                            <div class="chart-container-wrapper">
+                                <h4>Distribución de Confianza (Top 5 Diagnósticos)</h4>
+                                <div class="chart-container">
+                                    <canvas id="probabilityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PESTAÑA 2: CONSOLA MLOPS -->
+            <div class="tab-content" id="mlops-tab">
+                <div class="mlops-grid-layout">
+                    
+                    <!-- PANEL 2: REGISTRO DE MODELOS -->
+                    <section class="grid-card models-card">
+                        <div class="card-header">
+                            <div class="header-title-row">
+                                <h2><i class="fa-solid fa-box-archive"></i> Registro de Modelos (Model Registry)</h2>
+                                <button class="btn btn-secondary btn-sm" id="refresh-models-btn">
+                                    <i class="fa-solid fa-arrows-rotate"></i>
+                                </button>
+                            </div>
+                            <p>Control del repositorio de modelos de producción y candidatos del ciclo de vida (MLOps).</p>
+                        </div>
+                        <div class="card-body scroll-table-container">
+                            <table class="premium-table" id="models-table">
+                                <thead>
+                                    <tr>
+                                        <th>Versión</th>
+                                        <th>Model ID</th>
+                                        <th>Precisión</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dinámico -->
+                                    <tr>
+                                        <td colspan="5" style="text-align: center; padding: 2rem;">
+                                            <i class="fa-solid fa-spinner fa-spin"></i> Cargando metadatos del repositorio...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- PANEL 3: MANTENIMIENTO, DRIFT Y REENTRENAMIENTO -->
+                    <section class="grid-card maintenance-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-circle-nodes"></i> Monitoreo de Deriva y Mantenimiento del Sistema</h2>
+                            <p>Simula la deriva de datos (data drift) agregando nuevas muestras clínicas e inicia el reentrenamiento automatizado.</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="maintenance-grid">
+                                <!-- Simulador de Drift -->
+                                <div class="drift-simulator">
+                                    <h4>Añadir Nueva Muestra (Simulación de Deriva)</h4>
+                                    <div class="alert-box alert-warning" id="drift-alert">
+                                        <i class="fa-solid fa-triangle-exclamation alert-icon"></i>
+                                        <div class="alert-content">
+                                            <h5>¡Alerta de Data Drift!</h5>
+                                            <p>Se ha detectado una tasa inusual de nuevos casos clínicos en las muestras recientes de <strong>Lupus</strong> y <strong>Eczema</strong>. Se recomienda reentrenar.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="drift-class-select">Patología Detectada</label>
+                                            <select id="drift-class-select" class="form-control">
+                                                <!-- Cargado dinámicamente -->
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-secondary" id="trigger-drift-btn">
+                                            <i class="fa-solid fa-plus"></i> Registrar Caso
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Parámetros de Reentrenamiento -->
+                                <div class="retrain-form-box">
+                                    <h4>Configuración del Pipeline de Reentrenamiento</h4>
+                                    <form id="retrain-form" onsubmit="return false;">
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="retrain-epochs">Épocas (Epochs)</label>
+                                                <input type="number" id="retrain-epochs" value="5" min="1" max="30" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="retrain-lr">Tasa de Aprendizaje (LR)</label>
+                                                <input type="number" id="retrain-lr" value="0.0001" step="0.00001" min="0.000001" max="0.01" class="form-control">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-warning btn-block" id="start-retrain-btn">
+                                            <i class="fa-solid fa-gears"></i> Iniciar Pipeline de Reentrenamiento
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- PANEL 4: CONSOLA DE PIPELINE CI/CD -->
+                    <section class="grid-card cicd-card">
+                        <div class="card-header">
+                            <div class="header-title-row">
+                                <h2><i class="fa-solid fa-terminal"></i> Consola en Tiempo Real del Pipeline CI/CD</h2>
+                                <div class="console-actions">
+                                    <button class="btn btn-success btn-sm" id="run-ci-btn">
+                                        <i class="fa-solid fa-play"></i> Disparar Pipeline CI/CD
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" id="clear-console-btn">
+                                        <i class="fa-solid fa-trash-can"></i> Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                            <p>Monitorea las pruebas unitarias automatizadas (`test_app.py`), análisis sintáctico y el despliegue automático del modelo promovido.</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="terminal-window">
+                                <div class="terminal-header">
+                                    <div class="terminal-buttons">
+                                        <span class="close-btn"></span>
+                                        <span class="minimize-btn"></span>
+                                        <span class="maximize-btn"></span>
+                                    </div>
+                                    <div class="terminal-title">dermalai@mldevops-server:~</div>
+                                </div>
+                                <div class="terminal-body" id="terminal-body">
+                                    <p class="terminal-line welcome-line">[SISTEMA] Consola inicializada. Listo para recibir ejecuciones del Pipeline de Reentrenamiento o Integración Continua...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        <!-- FOOTER -->
+        <footer class="main-footer">
+            <p><strong>Proyecto de Primera Unidad - Aprendizaje de Máquina</strong> | Ciclo de Vida del Software y MLOps</p>
+            <p>Modelo DenseNet121 optimizado y compilado para TensorFlow Lite.</p>
+        </footer>
+    </div>
+
+    <!-- Script principal de la aplicación -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+# Caches de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Entornos virtuales
+.venv/
+venv/
+ENV/
+env/
+
+# Directorios de compilación y empaquetamiento
+dist/
+build/
+*.egg-info/
+.dist/
+
+# Cargas temporales de imágenes (MLOps local)
+temp_uploads/*
+!temp_uploads/.gitkeep
+
+# Archivos de configuración de IDEs
+.vscode/
+.idea/
+
+# Archivos temporales de pruebas unitarias
+temp_test_image.jpg
