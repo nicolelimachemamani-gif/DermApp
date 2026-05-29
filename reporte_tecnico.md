@@ -4,7 +4,7 @@ Este documento constituye el **Manual e Informe Técnico** formal del proyecto d
 
 ---
 
-## 1. Herramientas, Plataformas y Dependencias (2 Puntos)
+## 1. Herramientas, Plataformas y Dependencias
 
 La arquitectura de la aplicación DermalAI está diseñada para ser ligera, de alto rendimiento y fácil de desplegar. El ecosistema tecnológico se divide en tres capas fundamentales:
 
@@ -24,7 +24,7 @@ La arquitectura de la aplicación DermalAI está diseñada para ser ligera, de a
 
 ---
 
-## 2. Organización del Código Fuente (2 Puntos)
+## 2. Organización del Código Fuente
 
 El repositorio está organizado siguiendo patrones de diseño modulares que separan la lógica de interfaz de usuario, el servidor de API, el núcleo del modelo y los scripts de prueba.
 
@@ -56,7 +56,7 @@ aprendizaje de maquina/
 
 ---
 
-## 3. Consideraciones de Despliegue Inicial (2 Puntos)
+## 3. Consideraciones de Despliegue Inicial
 
 Para desplegar DermalAI de forma local o en un servidor de pruebas por primera vez, el equipo de TI debe seguir los siguientes pasos metodológicos:
 
@@ -92,7 +92,7 @@ Este contenedor puede asociarse a un balanceador de carga para escalar horizonta
 
 ---
 
-## 4. Flujos de Mantenimiento e Integración Continua (2 Puntos)
+## 4. Flujos de Mantenimiento e Integración Continua
 
 La gran innovación del proyecto DermalAI consiste en su automatización del ciclo de vida del aprendizaje automático (*ML Lifecycle*), integrando conceptos clave de **MLOps** directamente en una interfaz visual.
 
@@ -139,7 +139,7 @@ Una vez que existe un modelo candidato, se ejecuta de forma automática (o a tra
 
 ---
  
-## 5. Justificación Técnica de la Optimización de Hiperparámetros (4 Puntos)
+## 5. Justificación Técnica de la Optimización de Hiperparámetros
  
 Para cumplir con la rúbrica de entrenamiento del modelo y demostrar la optimización científica en base a métricas, se detalla a continuación el sustento teórico y experimental de la configuración de hiperparámetros seleccionada:
  
