@@ -35,7 +35,3 @@ http://localhost:5000
 
 ---
 
-## 📂 Estructura de Documentación Incluida
-Para que entregues a tu docente y te prepares para tu exposición, se han generado los siguientes reportes completos en español:
-1.  **Reporte Técnico de MLOps**: Ubicado en este mismo directorio como [reporte_tecnico.md](file:///c:/Users/Lenovo/Documents/9semestre/aprendizaje%20de%20maquina/reporte_tecnico.md). Este reporte contiene todas las justificaciones metodológicas, herramientas, estructura del código fuente, diagramas de arquitectura y flujos de CI/CD que cubren los **8 puntos del informe técnico de la rúbrica**. ¡Es ideal para ser impreso o convertido a PDF!
-2.  **Guía de Exposición y Walkthrough**: Ubicado en tu directorio de datos del asistente. Contiene el guion paso a paso de cómo hacer una presentación frente a tu profesor que le deje "boquiabierto". Puedes verlo aquí: [walkthrough.md](file:///C:/Users/Lenovo/.gemini/antigravity/brain/a59686e1-d690-44bd-b48b-7c662c92edac/walkthrough.md).

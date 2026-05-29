@@ -94,48 +94,75 @@ Este contenedor puede asociarse a un balanceador de carga para escalar horizonta
 
 ## 4. Flujos de Mantenimiento e Integración Continua
 
-La gran innovación del proyecto DermalAI consiste en su automatización del ciclo de vida del aprendizaje automático (*ML Lifecycle*), integrando conceptos clave de **MLOps** directamente en una interfaz visual.
+La gran innovación del proyecto DermalAI consiste en su automatización del ciclo de vida del aprendizaje automático (*ML Lifecycle*), integrando conceptos clave de **MLOps** y la metodología **Human-in-the-Loop** de forma coherente con un entorno real de Machine Learning supervisado en producción.
 
 ```mermaid
 flowchart TD
-    A[Muestra de Paciente subida en Producción] --> B{¿Deriva de Datos detectada?}
-    B -- Sí (Alerta en UI) --> C[Disparar Pipeline de Reentrenamiento]
-    B -- No --> A
+    A[Muestra de paciente subida en producción] --> B[Inferencia TFLite con Modelo Activo]
+    B --> C[Visualización del Diagnóstico Médico]
+    C --> D{¿Predicción es correcta? <br><b>Humano en el Bucle / Human-in-the-Loop</b>}
+    D -- Sí --> E[Almacenar muestra en repositorio de histórico]
+    D -- No (Deriva / Error) --> F[Etiquetado manual con clase correcta]
+    F --> G[Almacenar en carpeta 'new_data/class_id/']
     
-    C -->|Parámetros personalizados| D[retrain_pipeline.py]
-    D -->|Simulación/Entrenamiento con logs| E[Nuevo Modelo candidato v1.1.x generado]
-    E --> F[Registrado en models/metadata.json como 'candidate']
+    E --> H{¿Se acumuló lote de N muestras nuevas?}
+    G --> H
     
-    F --> G[Disparar Pipeline CI/CD]
-    G --> H[Análisis Estático Linter]
-    H -- Fallido --> I[Abortar e informar error]
-    H -- Exitoso --> J[Ejecutar test_app.py en unittest]
+    H -- No --> A
+    H -- Sí (Trigger de Mantenimiento) --> I[Disparar Pipeline de Reentrenamiento asíncrono]
     
-    J -- Fallido --> I
-    J -- Exitoso --> K[Control de Calidad: Comparar Precisión]
+    I --> J[Ejecución de retrain_pipeline.py]
+    J --> K[Generar Modelo Candidato v1.1.x]
+    K --> L[Registrar en models/metadata.json como 'candidate']
     
-    K -->|¿Mejor precisión?| L{Promover a Producción}
-    L -- Sí --> M[Cambiar estado a 'active' en metadata.json]
-    L -- No --> N[Mantener v1.0.0 activo / Rechazar candidato]
+    L --> M[Disparar Pipeline CI/CD en run_ci.py]
+    M --> N[Etapa 1: Análisis Estático Linter]
+    N -- Fallido --> O[Abortar e informar error]
+    N -- Exitoso --> P[Etapa 2: Pruebas Unitarias test_app.py]
     
-    M --> O[Hot Reload del modelo en app.py sin caídas]
+    P -- Fallido --> O
+    P -- Exitoso --> Q[Etapa 3: Control de Calidad del Modelo <br><b>Quality Gate Multimétrica</b>]
+    
+    Q --> R[Evaluar Candidato vs Activo en Test Set: <br>Accuracy, Precision, Recall, F1-Score, Matriz de Confusión]
+    R --> S{¿Supera umbrales y mejora al modelo activo?}
+    
+    S -- Sí --> T[Promover a Producción: Estado 'active' en metadata.json]
+    S -- No (Evitar degradación) --> U[Rechazar candidato / Mantener modelo actual activo]
+    
+    T --> V[Etapa 4: Hot Reload de la API Flask sin caída de servicio]
 ```
 
-### A. Detección de Deriva de Datos (Data Drift) y Mantenimiento
-En producción, la distribución de los datos entrantes puede variar con respecto a los datos de entrenamiento iniciales (por ejemplo, brotes repentinos de sarpullido estacional o cambios de iluminación en las fotos de los smartphones de los pacientes). DermalAI incluye un **módulo detector y simulador de Drift** en su panel central:
-1. El equipo clínico puede registrar casos entrantes para monitorear tendencias.
-2. Si la UI reporta una alerta crítica por data drift, se habilita el botón de **Reentrenamiento del Sistema**.
-3. El administrador de TI especifica épocas y tasas de aprendizaje, y dispara el proceso de reentrenamiento, el cual compila de manera fluida una nueva versión del clasificador y lo guarda como un archivo versionado (ej. `models/modelo_densenet_v1_1_4.tflite`).
-4. Este nuevo modelo se registra con estado `"candidate"` en `metadata.json`, protegiendo la producción de cambios directos no validados.
+### A. Adquisición de Datos, Deriva (Data Drift) y Mantenimiento de Producción
 
-### B. Pipeline CI/CD de Calidad y Promoción Automática (CD)
-Una vez que existe un modelo candidato, se ejecuta de forma automática (o a través del botón manual de la consola) el orquestador **`run_ci.py`**, el cual simula una canalización de integración continua (CI) ejecutando 4 etapas clave de calidad:
-1.  **Etapa 1: Análisis Estático (Linter)**: Ejecuta una compilación estática rápida del código fuente para asegurar que ninguna modificación de mantenimiento haya introducido errores sintácticos.
-2.  **Etapa 2: Pruebas Unitarias (`test_app.py`)**: Corre la suite de tests sobre el preprocesamiento de la imagen, la consistencia de las 22 clases de salida y los formatos de respuesta JSON de la API.
-3.  **Etapa 3: Model Quality Gate (Control de Calidad del Modelo)**: El pipeline lee `metadata.json`, extrae la precisión del modelo en producción activo y la compara con la del nuevo modelo `"candidate"`.
-    *   **Regla de Negocio MLOps**: Si la precisión del candidato supera al modelo en producción Y pasa un umbral mínimo de calidad del 70%, el candidato es **promovido automáticamente a producción** (estado `"active"` en `metadata.json`), y el modelo anterior se archiva como `"inactive"`.
-    *   Si no cumple las condiciones, el candidato se rechaza, protegiendo la aplicación en producción de regresiones de rendimiento.
-4.  **Etapa 4: Despliegue en Caliente (Hot Reload)**: El servidor Flask actualiza dinámicamente el modelo cargado en la API `/predict` al detectar el cambio de estado en `metadata.json`, logrando una actualización de software fluida, sin tiempo de inactividad de cara al usuario final.
+En un sistema de grado médico basado en aprendizaje supervisado, **el modelo no aprende automáticamente de forma inmediata con una sola imagen subida por el médico**. Hacerlo violaría los principios fundamentales de estabilidad y control de calidad, provocando un sesgo de confirmación acelerado y la degradación incontrolada del clasificador. El ciclo de vida de DermalAI modela de forma fidedigna la interacción y curaduría de datos en producción:
+
+1.  **Inferencia y Diagnóstico Médico**: El médico carga la imagen clínica en el **Módulo Clínico** y el sistema realiza una predicción rápida usando el modelo TFLite de producción actualmente activo.
+2.  **Validación y Human-in-the-Loop (Humano en el Bucle)**:
+    *   Una vez entregado el diagnóstico, el sistema expone un mecanismo para que el médico, patólogo o administrador de TI **valide la predicción**.
+    *   Si el diagnóstico del modelo es **correcto**, la muestra se archiva como caso de éxito.
+    *   Si la predicción es **incorrecta**, entra en juego el protocolo *Human-in-the-Loop*: el especialista médico **etiqueta manualmente la imagen con la patología verdadera (Ground Truth)**.
+3.  **Almacenamiento Estructurado y Curaduría**: Las imágenes etiquetadas manualmente se guardan en un repositorio de nuevos datos (`new_data/class_id/`), completamente clasificadas y organizadas por carpeta según su diagnóstico real verificado por el médico.
+4.  **Operación Ininterrumpida del Modelo Activo**: Mientras este proceso de etiquetado y recolección ocurre, el modelo de producción activo original sigue sirviendo inferencias clínicas con total normalidad, garantizando que el servicio médico esté siempre disponible.
+5.  **Acumulación y Disparo de Reentrenamiento en Lotes**: El reentrenamiento no se ejecuta por una sola imagen. Ocurre periódicamente (por ejemplo, semanalmente) o una vez acumulado un lote representativo de nuevas muestras (ej. $N$ imágenes). Al dispararse la alerta de deriva (*Data Drift*) por la acumulación de casos clínicos difíciles o nuevos patrones dermatológicos, el administrador de TI ejecuta `retrain_pipeline.py`, el cual entrena la arquitectura DenseNet121 combinando el dataset histórico y el lote de nuevas muestras validadas, generando así un **Modelo Candidato** (`models/modelo_densenet_candidate.tflite`).
+6.  **Aislamiento en Registro de Modelos (Model Registry)**: El nuevo modelo candidato se registra con estado `"candidate"` en `metadata.json`, protegiendo la API de producción de cambios no validados.
+
+### B. Pipeline CI/CD de Calidad, Evaluación Multimétrica y Promoción Automática (CD)
+
+Una vez compilado el modelo candidato, el script orquestador **`run_ci.py`** automatiza la integración y entrega continuas a través de 4 fases rigurosas de calidad informática y clínica:
+
+1.  **Etapa 1: Análisis Estático (Linter)**: Compila estáticamente los archivos fuentes (`app.py`, `predict_image.py`, etc.) para verificar la ausencia de errores sintácticos y garantizar que no haya regresiones de código.
+2.  **Etapa 2: Pruebas Unitarias del Sistema (`test_app.py`)**: Corre la suite de tests automatizados basada en `unittest` para verificar que los endpoints de la API, el preprocesamiento matemático de imágenes (PIL/NumPy) y las salidas JSON de 22 clases sigan funcionando con estabilidad absoluta.
+3.  **Etapa 3: Model Quality Gate (Control de Calidad Clínico Multimétrica)**: 
+    *   Para evitar la degradación del sistema en producción (evitar que un modelo nuevo diagnostique peor que el anterior), el pipeline evalúa al candidato en un conjunto de datos de prueba cerrado (*Test Set*) de 1,546 muestras con etiquetas médicas reales confirmadas.
+    *   **Evaluación Multimétrica de Grado Médico**: En lugar de evaluar solo una métrica, el Quality Gate calcula de manera exhaustiva las siguientes métricas de rendimiento clínico:
+        *   **Accuracy (Exactitud)**: Proporción total de diagnósticos correctos.
+        *   **Precision (Precisión)**: Capacidad de minimizar falsos positivos (crítico para evitar tratamientos agresivos innecesarios).
+        *   **Recall (Sensibilidad)**: Capacidad de minimizar falsos negativos (vital para no pasar por alto lesiones cancerosas graves).
+        *   **F1-Score**: El promedio armónico entre precisión y sensibilidad que proporciona una métrica de balance integral.
+        *   **Matriz de Confusión**: Mapeo completo de clasificaciones correctas e incorrectas por cada una de las 22 clases para diagnosticar desbalances de predicción.
+    *   **Promoción y Hot Reload Automatizado**: Si el modelo candidato supera un umbral de calidad clínico mínimo del $70\%$ Y demuestra un rendimiento superior al modelo en producción en base al conjunto de métricas (mayor Accuracy e igual o mejor F1-Score global), es aprobado y **promovido automáticamente a producción** (estado `"active"` en `metadata.json`), archivando el anterior como `"inactive"`.
+    *   **Mecanismo de Salvaguarda y Rechazo**: Si el candidato no supera al modelo en producción o degrada cualquiera de las métricas clave, el pipeline lo **rechaza inmediatamente** y mantiene el modelo actual en producción. Esto previene de forma absoluta la regresión del software y protege el servicio clínico.
+4.  **Etapa 4: Despliegue en Caliente (Hot Swap con Cero Downtime)**: La API Flask detecta automáticamente el cambio de estado en `metadata.json` y recarga en caliente el nuevo archivo `.tflite` aprobado en memoria para las siguientes inferencias, logrando una actualización con **cero tiempo de inactividad** para la clínica.
 
 ---
  
